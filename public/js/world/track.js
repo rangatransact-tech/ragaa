@@ -50,36 +50,52 @@ const WEDDING = [
 // one after another between `in` and `lines` end.
 export const CAPTIONS = {
   full: {
-    screens: 17,
+    screens: 19,
     list: [
-      ['invite', 0.012, 0.085, 0],
-      ['story', 0.088, 0.13, 0],
-      ['sangeeth', 0.15, 0.21, 0],
-      ['sg-details', 0.215, 0.335, 0.075],
-      ['trans-1', 0.352, 0.395, 0],
-      ['haldi', 0.46, 0.525, 0],
-      ['hd-details', 0.53, 0.645, 0.065],
-      ['trans-2', 0.66, 0.698, 0],
-      ['wedding', 0.715, 0.78, 0],
-      ['wd-details', 0.785, 0.945, 0.12],
+      ['invite', 0.012, 0.08, 0],
+      ['story', 0.085, 0.125, 0],
+      ['sangeeth', 0.14, 0.2, 0],
+      ['sg-details', 0.205, 0.32, 0.075],
+      ['trans-1', 0.335, 0.375, 0],
+      ['haldi', 0.42, 0.48, 0],
+      ['hd-details', 0.485, 0.6, 0.065],
+      ['trans-2', 0.615, 0.66, 0],
+      ['wedding', 0.68, 0.73, 0],
+      ['wd-details', 0.735, 0.875, 0.12],
+      ['hyderabad', 0.905, 0.99, 0],
     ],
-    // the three timeline lines: 6:00 early, 7:54 exactly as the sun meets
-    // the horizon (p = 0.85), noon after it
-    lineAt: { 'wd-details': [0.795, 0.845, 0.895, 0.915] },
-    dots: { invite: 0.04, story: 0.105, sangeeth: 0.175, haldi: 0.49, wedding: 0.745 },
+    // the three timeline lines; 7:54 lands as the sun meets the horizon
+    lineAt: { 'wd-details': [0.745, 0.79, 0.83, 0.85] },
+    dots: { invite: 0.04, story: 0.105, sangeeth: 0.165, haldi: 0.445, wedding: 0.7, venue: 0.94 },
+    // journey progress -> 3D flight progress (the flight plan predates the
+    // Hyderabad chapter, so it is stretched to fit)
+    remap: [[0, 0], [0.14, 0.15], [0.335, 0.352], [0.42, 0.46], [0.615, 0.66], [0.68, 0.715], [0.79, 0.85], [0.875, 0.945], [1, 1]],
   },
   wedding: {
-    screens: 9,
+    screens: 10,
     list: [
-      ['invite', 0.02, 0.15, 0],
-      ['story', 0.155, 0.25, 0],
-      ['wedding', 0.28, 0.4, 0],
-      ['wd-details', 0.41, 0.9, 0.2],
+      ['invite', 0.02, 0.14, 0],
+      ['story', 0.145, 0.23, 0],
+      ['wedding', 0.26, 0.35, 0],
+      ['wd-details', 0.36, 0.74, 0.2],
+      ['hyderabad', 0.8, 0.985, 0],
     ],
-    lineAt: { 'wd-details': [0.43, 0.6, 0.72, 0.76] },
-    dots: { invite: 0.06, story: 0.2, wedding: 0.33 },
+    lineAt: { 'wd-details': [0.38, 0.54, 0.64, 0.68] },
+    dots: { invite: 0.06, story: 0.19, wedding: 0.3, venue: 0.86 },
+    remap: [[0, 0], [0.26, 0.28], [0.54, 0.61], [0.74, 0.9], [1, 1]],
   },
 };
+
+export function remapP(kind, p) {
+  const r = CAPTIONS[kind].remap;
+  for (let i = 0; i < r.length - 1; i++) {
+    if (p <= r[i + 1][0]) {
+      const t = (p - r[i][0]) / (r[i + 1][0] - r[i][0]);
+      return r[i][1] + (r[i + 1][1] - r[i][1]) * t;
+    }
+  }
+  return 1;
+}
 
 // Fritsch-Carlson monotone cubic
 function monotone(xs, ys) {

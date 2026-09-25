@@ -96,6 +96,7 @@ const en = {
   'vr.l3': 'Lunch at 12 noon',
   'vr.l4': 'Eluru, Andhra Pradesh',
 
+  'venue.when': 'Until then',
   'venue.title': 'See you in Hyderabad',
   'venue.addr': 'Haryana Bhavan, 1-8-179, S.D. Road, Paradise\nSecunderabad, Hyderabad',
   'venue.btn': 'Get directions',
@@ -132,6 +133,7 @@ const en = {
   'dot.sangeeth': 'Sangeeth',
   'dot.haldi': 'Haldi',
   'dot.wedding': 'Wedding',
+  'dot.venue': 'Hyderabad',
   'dot.vratham': 'Vratham',
   'dot.rsvp': 'RSVP',
 
@@ -238,6 +240,7 @@ const te = {
   'vr.l3': 'మధ్యాహ్నం 12 గంటలకు భోజనం',
   'vr.l4': 'ఏలూరు, ఆంధ్రప్రదేశ్',
 
+  'venue.when': 'అప్పటిదాకా',
   'venue.title': 'హైదరాబాద్‌లో కలుద్దాం',
   'venue.addr': 'హర్యానా భవన్, 1-8-179, ఎస్.డి. రోడ్, ప్యారడైజ్\nసికింద్రాబాద్, హైదరాబాద్',
   'venue.btn': 'దారి చూడండి',
@@ -274,6 +277,7 @@ const te = {
   'dot.sangeeth': 'సంగీత్',
   'dot.haldi': 'హల్దీ',
   'dot.wedding': 'పెళ్లి',
+  'dot.venue': 'హైదరాబాద్',
   'dot.vratham': 'వ్రతం',
   'dot.rsvp': 'RSVP',
 
@@ -380,6 +384,7 @@ const ta = {
   'vr.l3': 'மதியம் 12 மணிக்கு மதிய உணவு',
   'vr.l4': 'ஏலூரு, ஆந்திரப் பிரதேசம்',
 
+  'venue.when': 'அதுவரை',
   'venue.title': 'ஹைதராபாத்தில் சந்திப்போம்',
   'venue.addr': 'ஹரியானா பவன், 1-8-179, எஸ்.டி. ரோடு, பாரடைஸ்\nசெகந்திராபாத், ஹைதராபாத்',
   'venue.btn': 'வழியைப் பாருங்கள்',
@@ -416,6 +421,7 @@ const ta = {
   'dot.sangeeth': 'சங்கீத்',
   'dot.haldi': 'ஹல்தி',
   'dot.wedding': 'திருமணம்',
+  'dot.venue': 'ஹைதராபாத்',
   'dot.vratham': 'விரதம்',
   'dot.rsvp': 'RSVP',
 

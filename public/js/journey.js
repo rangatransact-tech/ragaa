@@ -1,7 +1,8 @@
 // One animation loop drives everything after the opening: scroll position is
 // smoothed into journey progress p, and p positions the drone, the light and
 // every caption. Nothing is pinned, nothing waits: it simply flies.
-import { CAPTIONS } from './world/track.js';
+import { CAPTIONS, remapP } from './world/track.js';
+import { createFilm } from './film.js';
 import { MOHANAM, softBell, templeBells, puff, NOTE } from './audio.js';
 import { diag } from './diag.js';
 
@@ -13,6 +14,9 @@ export function createJourney({ reduced, getInvite, opening, onChapter }) {
   const shade = document.getElementById('shade');
   const canvas = document.getElementById('world');
   const fallback = document.getElementById('world-fallback');
+  const filmCanvas = document.getElementById('film');
+  let film = null;
+  const filmReady = createFilm(filmCanvas).then((f) => { film = f; return f; });
   const caps = [...document.querySelectorAll('.cap')];
   let world = null;
   let worldFailed = false;
@@ -126,15 +130,18 @@ export function createJourney({ reduced, getInvite, opening, onChapter }) {
 
     // the dark shade that settles over the final scene for the last sections
     const post = clamp((sy - (geo.afterTop - vh)) / vh, 0, 1.5);
-    const sh = Math.max(0.55 * smooth(0.955, 1, p), 0.55 + 0.4 * smooth(0, 1, post) * (p > 0.99 ? 1 : 0));
-    shade.style.opacity = (p > 0.95 ? sh : 0).toFixed(3);
+    const sh = Math.max(0.55 * smooth(0.99, 1, p), 0.55 + 0.4 * smooth(0, 1, post) * (p > 0.995 ? 1 : 0));
+    shade.style.opacity = (p > 0.985 ? sh : 0).toFixed(3);
 
     updateCaptions(p);
     if (onChapter) onChapter(p);
 
     const visible = q > 0.02 && !(sh > 0.94);
     if (!visible || !started) return;
-    const renderP = p; // scroll-driven: the guest controls the motion, so it flies for everyone
+    const renderP = remapP(getInvite(), p); // scroll-driven: the guest moves it, so it flies for everyone
+    const covered = film ? film.render(getInvite(), p) : 0;
+    if (covered > 0.999) return; // real footage fills the screen
+    if (!world && !worldFailed) loadWorldImpl();
     if (world && world.state.restored) { world = null; worldFailed = false; loadingWorld = false; startWorld(); }
     if (world && !world.state.lost) {
       // when nothing moves, draw every other frame (stars still twinkle)
@@ -191,7 +198,8 @@ export function createJourney({ reduced, getInvite, opening, onChapter }) {
     get p() { return p; },
     get geo() { return geo; },
     hasStory: () => storyOn,
-    loadWorld: () => loadWorldImpl(),
+    // load the 3D world only if some scene still has no footage
+    loadWorld: () => filmReady.then((f) => { if (!f.complete(getInvite())) loadWorldImpl(); }),
     start() { started = true; },
   };
 }
