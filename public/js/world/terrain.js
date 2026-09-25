@@ -162,7 +162,7 @@ export function createTerrain(gl, { N = 64, levels = 8, base = 2 } = {}) {
 
   return {
     prog,
-    setQuality(q) { shadowSteps = q >= 2 ? 13 : q === 1 ? 10 : 7; },
+    setQuality(q) { shadowSteps = q >= 2 ? 13 : q === 1 ? 8 : 5; },
     draw(frameUniforms, camPos) {
       gl.useProgram(prog.p);
       setUniforms(gl, prog, frameUniforms);

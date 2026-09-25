@@ -11,6 +11,7 @@ import { createSea } from './sea.js';
 import { createTemple, templeSite } from './temple.js';
 import { createParticles } from './particles.js';
 import { makeTrack } from './track.js';
+import { diag } from '../diag.js';
 
 const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
 const mix = (a, b, t) => a + (b - a) * t;
@@ -56,13 +57,18 @@ export function createWorld({ canvas, reduced }) {
   let gl = null;
   try {
     gl = canvas.getContext('webgl2', { antialias: false, alpha: false, depth: true, stencil: false, powerPreference: 'high-performance', preserveDrawingBuffer: false });
-  } catch (e) { gl = null; }
+  } catch (e) { gl = null; diag.log('webgl2 threw: ' + e.message); }
+  diag.set('webgl2', gl ? 'yes' : 'NO');
   if (!gl) return null;
+  try {
+    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    diag.set('gpu', ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+  } catch (e) { /* ignore */ }
 
   const coarse = matchMedia('(pointer: coarse)').matches;
-  const DPR = [0.55, 0.65, 0.75, 0.85, 1.0, 1.15, 1.3, 1.5, 1.75];
+  const DPR = [0.45, 0.55, 0.65, 0.75, 0.85, 1.0, 1.15, 1.3, 1.5, 1.75];
   const maxDpr = Math.min(window.devicePixelRatio || 1, 2);
-  let di = DPR.findIndex((d) => d >= Math.min(maxDpr, coarse ? 1.3 : 1.5));
+  let di = DPR.findIndex((d) => d >= Math.min(maxDpr, coarse ? 1.0 : 1.5));
   if (di < 0) di = DPR.length - 1;
   let quality = coarse ? 1 : 2;
 
@@ -81,6 +87,7 @@ export function createWorld({ canvas, reduced }) {
     };
   } catch (e) {
     console.warn(e);
+    diag.log('build failed: ' + e.message);
     return null;
   }
   parts.terrain.setQuality(quality);
@@ -149,12 +156,12 @@ export function createWorld({ canvas, reduced }) {
   function adapt(dt) {
     if (dt <= 0 || dt > 200) return;
     perfN++; perfT += dt;
-    if (perfN < 45) return;
+    if (perfN < 30) return;
     const avg = perfT / perfN;
     perfN = 0; perfT = 0;
     if (avg > 21) {
       calm = 0;
-      if (di > 3) di--;
+      if (di > 4) di = Math.max(4, di - (avg > 40 ? 2 : 1));
       else if (quality > 0) { quality--; parts.terrain.setQuality(quality); }
       else if (di > 0) di--;
       resize();
@@ -162,7 +169,7 @@ export function createWorld({ canvas, reduced }) {
       if (++calm >= 3) {
         calm = 0;
         const cap = DPR.findIndex((d) => d >= maxDpr);
-        if (quality < 2 && di >= 4) { quality++; parts.terrain.setQuality(quality); }
+        if (quality < 2 && di >= 5) { quality++; parts.terrain.setQuality(quality); }
         else if (di < (cap < 0 ? DPR.length - 1 : cap)) { di++; resize(); }
       }
     } else calm = 0;
@@ -250,7 +257,8 @@ export function createWorld({ canvas, reduced }) {
     parts.particles.draw(u, { uRight: r2, uUp: u2, uCloudLit: env.cloudLit, uCloudShade: env.cloudShade }, pos);
   }
 
-  canvas.addEventListener('webglcontextlost', (ev) => { ev.preventDefault(); state.lost = true; });
+  canvas.addEventListener('webglcontextlost', (ev) => { ev.preventDefault(); state.lost = true; diag.log('context lost'); });
+  canvas.addEventListener('webglcontextrestored', () => { diag.log('context restored'); state.restored = true; });
 
   return {
     render,
@@ -258,5 +266,6 @@ export function createWorld({ canvas, reduced }) {
     state,
     // warm up shader compilation on a quiet screen
     prime(kind) { render(kind, 0, performance.now()); },
+    info() { return { dpr: DPR[di], quality, size: W + 'x' + H }; },
   };
 }

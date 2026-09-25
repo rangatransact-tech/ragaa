@@ -3,6 +3,7 @@
 // every caption. Nothing is pinned, nothing waits: it simply flies.
 import { CAPTIONS } from './world/track.js';
 import { MOHANAM, softBell, templeBells, puff, NOTE } from './audio.js';
+import { diag } from './diag.js';
 
 const clamp = (x, a, b) => Math.min(b, Math.max(a, x));
 const smooth = (a, b, x) => { const t = clamp((x - a) / (b - a), 0, 1); return t * t * (3 - 2 * t); };
@@ -19,6 +20,9 @@ export function createJourney({ reduced, getInvite, opening, onChapter }) {
   let p = 0, pT = 0, lastNow = 0, frame = 0;
   let geo = { top: 0, len: 1, vh: innerHeight, afterTop: 0 };
   let storyOn = false;
+  let renderErrors = 0, loadingWorld = false;
+  function useFallback() { world = null; worldFailed = true; canvas.style.display = 'none'; fallback.classList.add('on'); }
+  function startWorld() { loadWorldImpl(); }
   const revealed = new Map();
 
   function config() { return CAPTIONS[getInvite()]; }
@@ -83,19 +87,6 @@ export function createJourney({ reduced, getInvite, opening, onChapter }) {
     else if (kind === 'wedding') { if (i === 1) templeBells(); else softBell(i === 0 ? NOTE.A4 : NOTE.D5, 0, 0.16); }
   }
 
-  // Reduced motion: hold one calm view per chapter, crossfading between them.
-  let heldP = -1;
-  function reducedP(p) {
-    const anchors = config().list.map((c) => (c[1] + c[2]) / 2);
-    let best = anchors[0];
-    for (const a of anchors) if (p >= a - 0.03) best = a;
-    if (best !== heldP) {
-      if (heldP >= 0) { canvas.style.transition = 'opacity .5s'; canvas.style.opacity = '0'; setTimeout(() => { heldP = best; canvas.style.opacity = '1'; }, 500); }
-      else heldP = best;
-    }
-    return heldP;
-  }
-
   function paintFallback(p) {
     // without WebGL: a painted sky that still travels night -> morning -> dawn
     const kind = getInvite();
@@ -128,7 +119,7 @@ export function createJourney({ reduced, getInvite, opening, onChapter }) {
     const q = clamp(sy / vh, 0, 1);
     opening.exit(q);
     pT = clamp((sy - geo.top) / geo.len, 0, 1);
-    const k = reduced ? 1 : 1 - Math.exp(-dt * 3.6);
+    const k = 1 - Math.exp(-dt * 3.6);
     const settled = Math.abs(pT - p) < 1e-5;
     p += (pT - p) * k;
     if (Math.abs(pT - p) < 1e-6) p = pT;
@@ -143,11 +134,20 @@ export function createJourney({ reduced, getInvite, opening, onChapter }) {
 
     const visible = q > 0.02 && !(sh > 0.94);
     if (!visible || !started) return;
-    const renderP = reduced ? reducedP(p) : p;
-    if (world) {
+    const renderP = p; // scroll-driven: the guest controls the motion, so it flies for everyone
+    if (world && world.state.restored) { world = null; worldFailed = false; loadingWorld = false; startWorld(); }
+    if (world && !world.state.lost) {
       // when nothing moves, draw every other frame (stars still twinkle)
       if (settled && (frame & 1)) return;
-      world.render(getInvite(), renderP, now);
+      try {
+        world.render(getInvite(), renderP, now);
+        renderErrors = 0;
+        diag.frame(now);
+        if ((frame & 63) === 0) { const i = world.info(); diag.set('render', `${i.size} @${i.dpr} q${i.quality}`); }
+      } catch (e) {
+        diag.log('render: ' + e.message);
+        if (++renderErrors > 3) useFallback();
+      }
     } else paintFallback(renderP);
   }
 
@@ -165,6 +165,21 @@ export function createJourney({ reduced, getInvite, opening, onChapter }) {
     }).observe(storyCap);
   }
 
+  async function loadWorldImpl() {
+    if (world || worldFailed || loadingWorld) return;
+    loadingWorld = true;
+    const t = performance.now();
+    try {
+      const mod = await import('./world/world.js');
+      world = mod.createWorld({ canvas, reduced });
+      if (world) world.prime(getInvite());
+    } catch (e) { diag.log('world: ' + e.message); world = null; }
+    loadingWorld = false;
+    diag.set('world', world ? `ready in ${Math.round(performance.now() - t)} ms` : 'unavailable (fallback)');
+    if (!world) useFallback();
+    else { canvas.style.display = ''; canvas.classList.add('on'); }
+  }
+
   measure();
   window.addEventListener('resize', measure);
   requestAnimationFrame(loop);
@@ -176,15 +191,7 @@ export function createJourney({ reduced, getInvite, opening, onChapter }) {
     get p() { return p; },
     get geo() { return geo; },
     hasStory: () => storyOn,
-    async loadWorld() {
-      if (world || worldFailed) return;
-      try {
-        const mod = await import('./world/world.js');
-        world = mod.createWorld({ canvas, reduced });
-      } catch (e) { console.warn(e); world = null; }
-      if (!world) { worldFailed = true; canvas.style.display = 'none'; fallback.classList.add('on'); }
-      else { world.prime(getInvite()); canvas.classList.add('on'); }
-    },
+    loadWorld: () => loadWorldImpl(),
     start() { started = true; },
   };
 }

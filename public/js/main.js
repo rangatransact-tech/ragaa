@@ -5,6 +5,7 @@ import { createJourney } from './journey.js';
 import { initRSVP, initMemories } from './guests.js';
 import { isMuted, setMuted } from './audio.js';
 import { CAPTIONS } from './world/track.js';
+import './diag.js';
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const $ = (s, r = document) => r.querySelector(s);
@@ -65,6 +66,8 @@ const opening = initOpening({
   reduced,
   onOpened() {
     locked = false;
+    window.removeEventListener('wheel', block);
+    window.removeEventListener('touchmove', block);
     document.documentElement.classList.remove('is-locked');
     document.body.classList.remove('is-locked');
     $('#dots').hidden = false; $('#mute').hidden = false;

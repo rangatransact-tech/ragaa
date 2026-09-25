@@ -126,7 +126,7 @@ export function initOpening({ reduced, onOpened }) {
     if (Math.abs(q - lastQ) < 0.001) return;
     lastQ = q;
     const e = q * q * (3 - 2 * q);
-    stage.style.transform = reduced ? '' : `scale(${1 + e * 2.6})`;
+    stage.style.transform = `scale(${1 + e * (reduced ? 1.2 : 2.6)})`;
     stage.style.opacity = String(1 - Math.min(1, Math.max(0, (q - 0.3) / 0.6)));
     names.style.opacity = String(1 - Math.min(1, q / 0.35));
     mono.style.opacity = String(1 - Math.min(1, q / 0.45));
