@@ -40,70 +40,154 @@
 </head>
 <body class="is-locked">
 
-<!-- Fixed layers behind (and above) the content -->
+<!-- The flight renders here, behind everything -->
 <canvas id="world" aria-hidden="true"></canvas>
 <div id="world-fallback" aria-hidden="true"></div>
+<div id="vignette" aria-hidden="true"></div>
 <div id="shade" aria-hidden="true"></div>
-<canvas id="gulal" aria-hidden="true"></canvas>
 
 <main>
 
-<!-- 1. Opening -->
+<!-- 1. Opening: the rings, then scrolling flies into the light -->
 <section id="opening" class="opening" aria-labelledby="names">
-  <div class="op-stage">
-    <div class="op-zoom">
-      <img id="ring-photo" class="op-photo" src="assets/ring.jpg" width="1536" height="2304" data-i18n-alt="alt.ring" alt="" fetchpriority="high" decoding="async">
-      <svg class="op-rings" aria-hidden="true">
-        <defs>
-          <filter id="glint" x="-50%" y="-50%" width="200%" height="200%">
-            <feGaussianBlur stdDeviation="2.2" result="b"/>
-            <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <g class="ring" data-ring="0"><ellipse class="ring-line" pathLength="100"/><ellipse class="ring-glint" pathLength="100" filter="url(#glint)"/></g>
-        <g class="ring" data-ring="1"><ellipse class="ring-line" pathLength="100"/><ellipse class="ring-glint" pathLength="100" filter="url(#glint)"/></g>
-      </svg>
+  <div class="op-sticky">
+    <div class="op-stage">
+      <div class="op-zoom">
+        <img id="ring-photo" class="op-photo" src="assets/ring.jpg" width="1024" height="1536" data-i18n-alt="alt.ring" alt="" fetchpriority="high" decoding="async">
+        <svg class="op-rings" aria-hidden="true">
+          <defs>
+            <filter id="glint" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur stdDeviation="2.2" result="b"/>
+              <feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+          </defs>
+          <g class="ring" data-ring="0"><ellipse class="ring-line" pathLength="100"/><ellipse class="ring-glint" pathLength="100" filter="url(#glint)"/></g>
+          <g class="ring" data-ring="1"><ellipse class="ring-line" pathLength="100"/><ellipse class="ring-glint" pathLength="100" filter="url(#glint)"/></g>
+        </svg>
+      </div>
+      <div class="op-grad"></div>
     </div>
-    <div class="op-grad"></div>
-  </div>
 
-  <svg class="op-mono" viewBox="0 0 600 240" aria-hidden="true">
-    <defs>
-      <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#EBCB8B"/><stop offset=".55" stop-color="#D6B06A"/><stop offset="1" stop-color="#A9823E"/>
-      </linearGradient>
-      <filter id="mono-shadow" x="-20%" y="-30%" width="140%" height="160%">
-        <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#0b0704" flood-opacity=".75"/>
-      </filter>
-    </defs>
-    <text x="300" y="160" text-anchor="middle" filter="url(#mono-shadow)">RaGaa</text>
-  </svg>
+    <svg class="op-mono" viewBox="0 0 600 240" aria-hidden="true">
+      <defs>
+        <linearGradient id="gold" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#EBCB8B"/><stop offset=".55" stop-color="#D6B06A"/><stop offset="1" stop-color="#A9823E"/>
+        </linearGradient>
+        <filter id="mono-shadow" x="-20%" y="-30%" width="140%" height="160%">
+          <feDropShadow dx="0" dy="3" stdDeviation="6" flood-color="#0b0704" flood-opacity=".75"/>
+        </filter>
+      </defs>
+      <text x="300" y="160" text-anchor="middle" filter="url(#mono-shadow)">RaGaa</text>
+    </svg>
 
-  <div class="op-prompt" aria-hidden="true">
-    <p class="op-touch" data-i18n="open.touch">Touch the rings</p>
-    <p class="op-tap" data-i18n="open.tap">Tap to open your invitation</p>
-  </div>
-  <button type="button" class="op-btn" data-i18n-aria="open.button" aria-label="Open your invitation"></button>
+    <div class="op-prompt" aria-hidden="true">
+      <p class="op-touch" data-i18n="open.touch">Touch the rings</p>
+      <p class="op-tap" data-i18n="open.tap">Tap to open your invitation</p>
+    </div>
+    <button type="button" class="op-btn" data-i18n-aria="open.button" aria-label="Open your invitation"></button>
 
-  <div class="op-names">
-    <h1 id="names" class="names" lang="en">
-      <span>Ranganadh</span>
-      <span class="amp">&amp;</span>
-      <span>Gaayathri</span>
-    </h1>
-    <p class="names-native" aria-hidden="true"></p>
-    <div class="scroll-cue"><span class="cue-line"></span><span data-i18n="open.scroll">Scroll to begin</span></div>
+    <div class="op-names">
+      <h1 id="names" class="names" lang="en">
+        <span>Ranganadh</span>
+        <span class="amp">&amp;</span>
+        <span>Gaayathri</span>
+      </h1>
+      <p class="names-native" aria-hidden="true"></p>
+      <div class="scroll-cue"><span class="cue-line"></span><span data-i18n="open.scroll">Scroll to begin</span></div>
+    </div>
   </div>
 </section>
 
-<!-- 2. Invitation -->
-<section id="invite" class="panel invite" data-dot="dot.invite">
-  <div class="panel-in">
+<!-- 2. The flight. Its height sets how long the journey lasts. -->
+<section id="journey" class="journey" aria-label="The celebrations"></section>
+
+<!-- 3. After the flight -->
+<div class="after">
+  <section id="vratham" class="panel vratham" data-dot="dot.vratham">
+    <div class="panel-in">
+      <h2 class="h-italic" data-i18n="vr.title">Vratham</h2>
+      <ul class="lines">
+        <li class="first" data-i18n="vr.l1">Monday, 2 November 2026</li>
+        <li data-i18n="vr.l2">From 9 in the morning</li>
+        <li data-i18n="vr.l3">Lunch at 12 noon</li>
+        <li data-i18n="vr.l4">Eluru, Andhra Pradesh</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="venue" class="panel venue">
+    <div class="panel-in">
+      <h2 class="h-italic" data-i18n="venue.title">See you in Hyderabad</h2>
+      <p class="addr" data-i18n="venue.addr">Haryana Bhavan, 1-8-179, S.D. Road, Paradise<br>Secunderabad, Hyderabad</p>
+      <a class="btn" id="map-link" target="_blank" rel="noopener" data-i18n="venue.btn">Get directions</a>
+    </div>
+  </section>
+
+  <section id="gifts" class="panel gifts">
+    <div class="panel-in">
+      <h2 class="h-italic" data-i18n="gift.title">Gifts</h2>
+      <p class="gift-text" data-i18n="gift.text">Your presence and blessings mean the most to us. If you'd like to give something more, we've made a registry.</p>
+      <a class="btn" id="registry-link" target="_blank" rel="noopener" data-i18n="gift.btn">Open our registry</a>
+      <div class="registry-embed" hidden></div>
+    </div>
+  </section>
+
+  <section id="rsvp" class="panel rsvp" data-dot="dot.rsvp">
+    <div class="panel-in">
+      <h2 class="h-italic" data-i18n="rsvp.title">Will you join us?</h2>
+      <form id="rsvp-form" novalidate>
+        <label class="field">
+          <span data-i18n="rsvp.name">Your name</span>
+          <input type="text" name="name" autocomplete="name" maxlength="80" required>
+        </label>
+        <div class="field">
+          <span id="count-label" data-i18n="rsvp.count">How many of you are coming?</span>
+          <div class="stepper" role="group" aria-labelledby="count-label">
+            <button type="button" class="step" data-step="-1" data-i18n-aria="rsvp.less">−</button>
+            <output id="count" aria-live="polite">1</output>
+            <button type="button" class="step" data-step="1" data-i18n-aria="rsvp.more">+</button>
+          </div>
+          <div class="people" aria-hidden="true"></div>
+        </div>
+        <p class="form-msg" role="alert"></p>
+        <button type="submit" class="btn" data-i18n="rsvp.send">Send RSVP</button>
+      </form>
+      <div id="rsvp-done" class="rsvp-done" hidden aria-live="polite">
+        <p class="thanks"></p>
+        <button type="button" class="text-link" data-i18n="rsvp.change">Change my response</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="memories" class="panel memories" hidden>
+    <div class="panel-in wide">
+      <h2 class="h-italic" data-i18n="mem.title">Memories</h2>
+      <p data-i18n="mem.text">Share photos of us, of you, or of the celebrations. They appear here once we've seen them.</p>
+      <label class="btn file-btn"><input type="file" id="photo-input" accept="image/*" multiple><span data-i18n="mem.add">Add photos</span></label>
+      <p class="mem-status" aria-live="polite"></p>
+      <div class="wall"></div>
+      <p class="mem-empty" data-i18n="mem.empty">No photos yet. Yours could be the first.</p>
+    </div>
+  </section>
+
+  <section id="closing" class="panel closing">
+    <div class="panel-in">
+      <p class="mono-big" aria-label="RaGaa">RaGaa</p>
+      <p class="love" data-i18n="close.love">With love</p>
+      <p class="short-names h-italic" data-i18n="names.short">Ranga &amp; Gaayu</p>
+    </div>
+  </section>
+</div>
+
+</main>
+
+<!-- Titles that appear over the flight, like a film -->
+<div id="captions" class="captions">
+  <div class="cap" data-cap="invite" data-dot="dot.invite">
     <p class="lead" data-i18n="inv.lead">With joy in our hearts, we invite you to our wedding</p>
     <p class="big-date" data-i18n="inv.date">Sunday, 1 November 2026</p>
     <p class="muhurtham"><span data-i18n="inv.muhurtham">Muhurtham at 7:54 in the morning</span><br><em data-i18n="inv.ritual">Jeelakarra Bellam</em></p>
     <p class="addr" data-i18n="inv.addr">Haryana Bhavan, 1-8-179, S.D. Road, Paradise<br>Secunderabad, Hyderabad</p>
-    <div class="rule" aria-hidden="true"></div>
     <p class="until" data-i18n="inv.until">Until the muhurtham</p>
     <div class="countdown" role="timer" aria-live="off">
       <div><span class="cd-n" data-cd="d">00</span><span class="cd-l" data-i18n="cd.days">days</span></div>
@@ -112,274 +196,64 @@
       <div><span class="cd-n" data-cd="s">00</span><span class="cd-l" data-i18n="cd.seconds">seconds</span></div>
     </div>
   </div>
-</section>
 
-<!-- 3. Our story -->
-<section id="story" class="panel story" data-dot="dot.story">
-  <div class="panel-in">
+  <div class="cap" data-cap="story" data-dot="dot.story" hidden>
     <h2 class="h-italic" data-i18n="story.title">Our story</h2>
-    <div class="story-frame">
-      <video id="story-video" muted loop playsinline preload="none" disablepictureinpicture data-i18n-aria="alt.story"></video>
-    </div>
+    <div class="story-frame"><video id="story-video" muted loop playsinline preload="metadata" disablepictureinpicture data-i18n-aria="alt.story"></video></div>
     <p class="story-text" data-i18n="story.text">A few quiet moments on the backwaters. The rest of our story is still being written.</p>
   </div>
-</section>
 
-<!-- 4. Gate: the 3D world fades in here -->
-<section id="gate" class="gate" data-cam-full="-6 9.5 0.02 0.00 0.03" data-cam-wedding="84 6.5 0.0 -0.12 -0.12">
-  <div class="gate-in">
-    <h2 class="h-italic" data-i18n="gate.title">The celebrations</h2>
-    <p data-i18n="gate.text">Keep scrolling. We'll take you there.</p>
-  </div>
-</section>
-
-<!-- 5. Sangeeth -->
-<div class="world night" data-world="sangeeth" data-only="full">
-  <section id="sangeeth" class="w-sec w-intro" data-dot="dot.sangeeth" data-cam="2 6.4 0.16 0.13 0.17">
+  <div class="cap title" data-cap="sangeeth" data-only="full" data-dot="dot.sangeeth">
     <p class="when" data-i18n="sg.when">Friday night</p>
     <h2 class="w-title" data-i18n="sg.title">Sangeeth</h2>
     <p class="sub" data-i18n="sg.sub">An evening of music and dance under the moon</p>
-  </section>
+  </div>
+  <div class="cap details" data-cap="sg-details" data-only="full" data-sound="mohanam">
+    <ul class="lines" aria-live="polite">
+      <li class="ln first" data-i18n="sg.l1">Friday, 30 October 2026</li>
+      <li class="ln" data-i18n="sg.l2">From 6 in the evening</li>
+      <li class="ln" data-i18n="sg.l3">Haryana Bhavan, Secunderabad</li>
+      <li class="ln" data-i18n="sg.l4">Performances by family and friends</li>
+      <li class="ln" data-i18n="sg.l5">And a DJ to keep you dancing</li>
+      <li class="ln wear" data-i18n="wear.sg.lead">Glamour and glitter, in western wear.</li>
+    </ul>
+  </div>
+  <div class="cap trans" data-cap="trans-1" data-only="full">
+    <p data-i18n="sg.trans">The night fades. Morning is waiting in the desert.</p>
+  </div>
 
-  <section id="sg-stars" class="w-sec scrolly" style="--len:260" data-cam="7 4.4 0.2 0.19 0.36" data-steps="5">
-    <div class="sticky">
-      <p class="hint" data-i18n="sg.hint">Scroll to reveal the night</p>
-      <div class="constellation">
-        <svg class="note-lines" viewBox="0 0 100 100" aria-hidden="true">
-          <line x1="30" y1="76" x2="43" y2="71"/><line x1="43" y1="71" x2="46" y2="44"/><line x1="46" y1="44" x2="48" y2="14"/><line x1="48" y1="14" x2="68" y2="36"/>
-        </svg>
-        <button type="button" class="star" style="--x:30;--y:76" data-i18n-aria="sg.star"></button>
-        <button type="button" class="star" style="--x:43;--y:71" data-i18n-aria="sg.star"></button>
-        <button type="button" class="star" style="--x:46;--y:44" data-i18n-aria="sg.star"></button>
-        <button type="button" class="star" style="--x:48;--y:14" data-i18n-aria="sg.star"></button>
-        <button type="button" class="star" style="--x:68;--y:36" data-i18n-aria="sg.star"></button>
-      </div>
-      <ul class="reveal-lines" aria-live="polite">
-        <li data-i18n="sg.l1">Friday, 30 October 2026</li>
-        <li data-i18n="sg.l2">From 6 in the evening</li>
-        <li data-i18n="sg.l3">Haryana Bhavan, Secunderabad</li>
-        <li data-i18n="sg.l4">Performances by family and friends</li>
-        <li data-i18n="sg.l5">And a DJ to keep you dancing</li>
-      </ul>
-      <button type="button" class="text-link" data-finish data-i18n="sg.all">Light them all</button>
-    </div>
-  </section>
-
-  <section id="sg-wear" class="w-sec scrolly" style="--len:300" data-cam="14 2.4 0.05 0.36 0.38" data-steps="5">
-    <div class="sticky">
-      <h3 class="h-italic" data-i18n="wear.title">What to wear</h3>
-      <p class="wear-lead"><span data-i18n="wear.sg.lead">Glamour and glitter, in western wear.</span> <span class="wear-hint" data-i18n="wear.hint">Scroll to turn the swatches.</span></p>
-      <div class="swatchbook" data-set="sg" data-fabrics="sequins velvet satin metallic glitter"></div>
-      <div class="looks" data-looks="sangeeth"></div>
-    </div>
-  </section>
-
-  <section class="w-sec w-memory" data-cam="22 2.9 0.04 0.38 0.4">
-    <figure class="print tilt-l">
-      <img data-src="assets/blue.jpg" width="880" height="1100" data-i18n-alt="alt.blue" alt="" loading="lazy" decoding="async">
-      <figcaption data-i18n="sg.mem">A little closer to the stars</figcaption>
-    </figure>
-  </section>
-
-  <section class="w-sec w-trans" data-cam="41 6.7 0.06 0.34 0.34">
-    <p class="pill" data-i18n="sg.trans">The night fades. Morning is waiting in the desert.</p>
-  </section>
-</div>
-
-<!-- 6. Haldi -->
-<div class="world day" data-world="haldi" data-only="full">
-  <section id="haldi" class="w-sec w-intro" data-dot="dot.haldi" data-cam="56 3.2 0.02 0.26 0.27">
+  <div class="cap title" data-cap="haldi" data-only="full" data-dot="dot.haldi">
     <p class="when" data-i18n="hd.when">Saturday morning</p>
     <h2 class="w-title" data-i18n="hd.title">Haldi</h2>
     <p class="sub" data-i18n="hd.sub">Turmeric, laughter and a lot of colour</p>
-  </section>
+  </div>
+  <div class="cap details" data-cap="hd-details" data-only="full" data-sound="puff">
+    <ul class="lines" aria-live="polite">
+      <li class="ln first" data-i18n="hd.l1">Saturday, 31 October 2026</li>
+      <li class="ln" data-i18n="hd.l2">From 9:30 in the morning</li>
+      <li class="ln" data-i18n="hd.l3">Haryana Bhavan, Secunderabad</li>
+      <li class="ln" data-i18n="hd.l4">Come ready to get colourful</li>
+      <li class="ln wear" data-i18n="wear.hd.lead">Yellow, and ethnic.</li>
+    </ul>
+  </div>
+  <div class="cap trans" data-cap="trans-2" data-only="full">
+    <p data-i18n="hd.trans">Across the sand, the sea. And a temple waiting for sunrise.</p>
+  </div>
 
-  <section id="hd-throw" class="w-sec scrolly throw" style="--len:230" data-cam="61 2.3 -0.02 0.27 0.30" data-steps="4">
-    <div class="sticky">
-      <p class="hint" data-i18n="hd.hint">Scroll to throw colour</p>
-      <ul class="reveal-lines" aria-live="polite">
-        <li data-i18n="hd.l1">Saturday, 31 October 2026</li>
-        <li data-i18n="hd.l2">From 9:30 in the morning</li>
-        <li data-i18n="hd.l3">Haryana Bhavan, Secunderabad</li>
-        <li data-i18n="hd.l4">Come ready to get colourful</li>
-      </ul>
-      <button type="button" class="text-link" data-finish data-i18n="hd.all">Throw it all</button>
-    </div>
-  </section>
-
-  <section id="hd-wear" class="w-sec scrolly" style="--len:300" data-cam="68 2.7 0.0 0.30 0.32" data-steps="5">
-    <div class="sticky">
-      <h3 class="h-italic" data-i18n="wear.title">What to wear</h3>
-      <p class="wear-lead"><span data-i18n="wear.hd.lead">Yellow, and ethnic.</span> <span class="wear-hint" data-i18n="wear.hint">Scroll to turn the swatches.</span></p>
-      <div class="swatchbook" data-set="hd" data-fabrics="mul bandhani chanderi gota linen"></div>
-      <div class="palette" aria-hidden="true">
-        <i style="--c:#E9A800"></i><i style="--c:#F28C0F"></i><i style="--c:#C99A15"></i><i style="--c:#F2E04A"></i><i style="--c:#FFC61A"></i>
-      </div>
-      <p class="palette-text" data-i18n="hd.palette">Haldi yellow, marigold, mustard, lemon and sunflower</p>
-      <div class="looks" data-looks="haldi"></div>
-    </div>
-  </section>
-
-  <section class="w-sec w-memory" data-cam="75 2.5 0.02 0.32 0.33">
-    <figure class="print tilt-r landscape">
-      <img data-src="assets/birds.jpg" width="1100" height="733" data-i18n-alt="alt.birds" alt="" loading="lazy" decoding="async">
-      <figcaption data-i18n="hd.mem">Sunshine and good company</figcaption>
-    </figure>
-  </section>
-
-  <section class="w-sec w-trans" data-cam="88 2.8 0.02 0.20 -0.12">
-    <p class="pill" data-i18n="hd.trans">Across the sand, the sea. And a temple waiting for sunrise.</p>
-  </section>
-</div>
-
-<!-- 7. Wedding -->
-<div class="world day dawn" data-world="wedding">
-  <section id="wedding" class="w-sec w-intro predawn" data-dot="dot.wedding" data-cam="95 1.25 0.05 -0.11 -0.09">
+  <div class="cap title" data-cap="wedding" data-dot="dot.wedding">
     <p class="when" data-i18n="wd.when">Sunday, at dawn</p>
     <h2 class="w-title" data-i18n="wd.title">The Wedding</h2>
     <p class="sub" data-i18n="wd.sub">By the sea, as the sun rises</p>
-  </section>
-
-  <section id="wd-time" class="w-sec scrolly" style="--len:260" data-cam="100 1.1 0.06 -0.075 0.075" data-steps="3">
-    <div class="sticky">
-      <p class="hint" data-i18n="wd.hint">Scroll to light the morning</p>
-      <ol class="timeline" aria-live="polite">
-        <li><button type="button" class="diya-btn" data-i18n-aria="wd.lamp"><canvas class="diya" width="120" height="120"></canvas></button><p><em data-i18n="wd.t1.time">6:00 am</em><span data-i18n="wd.t1.text">The rituals begin</span></p></li>
-        <li><button type="button" class="diya-btn" data-i18n-aria="wd.lamp"><canvas class="diya" width="120" height="120"></canvas></button><p><em data-i18n="wd.t2.time">7:54 am</em><span data-i18n="wd.t2.text">Jeelakarra Bellam, the muhurtham</span></p></li>
-        <li><button type="button" class="diya-btn" data-i18n-aria="wd.lamp"><canvas class="diya" width="120" height="120"></canvas></button><p><em data-i18n="wd.t3.time">12:00 noon</em><span data-i18n="wd.t3.text">Lunch</span></p></li>
-      </ol>
-      <p class="addr small" data-i18n="wd.addr">Haryana Bhavan, 1-8-179, S.D. Road, Paradise, Secunderabad</p>
-    </div>
-  </section>
-
-  <section id="wd-wear" class="w-sec scrolly" style="--len:300" data-cam="104.5 1.3 0.05 0.09 0.12" data-steps="5">
-    <div class="sticky">
-      <h3 class="h-italic" data-i18n="wear.title">What to wear</h3>
-      <p class="wear-lead"><span data-i18n="wear.wd.lead">South Indian traditional.</span> <span class="wear-hint" data-i18n="wear.hint">Scroll to turn the swatches.</span></p>
-      <div class="swatchbook" data-set="wd" data-fabrics="kanjivaram pancha halfsaree silkkurta templegold"></div>
-      <div class="looks" data-looks="wedding"></div>
-    </div>
-  </section>
-
-  <section class="w-sec w-memory" data-cam="108.5 1.7 0.04 0.14 0.17">
-    <figure class="print tilt-l">
-      <img data-src="assets/court.jpg" width="880" height="1100" data-i18n-alt="alt.court" alt="" loading="lazy" decoding="async">
-      <figcaption data-i18n="wd.mem">Where it all comes together</figcaption>
-    </figure>
-  </section>
+  </div>
+  <div class="cap details" data-cap="wd-details" data-sound="wedding">
+    <ol class="lines timeline" aria-live="polite">
+      <li class="ln"><em data-i18n="wd.t1.time">6:00 am</em><span data-i18n="wd.t1.text">The rituals begin</span></li>
+      <li class="ln key"><em data-i18n="wd.t2.time">7:54 am</em><span data-i18n="wd.t2.text">Jeelakarra Bellam, the muhurtham</span></li>
+      <li class="ln"><em data-i18n="wd.t3.time">12:00 noon</em><span data-i18n="wd.t3.text">Lunch</span></li>
+      <li class="ln small"><span data-i18n="wd.addr">Haryana Bhavan, 1-8-179, S.D. Road, Paradise, Secunderabad</span><span class="wear" data-i18n="wear.wd.lead">South Indian traditional.</span></li>
+    </ol>
+  </div>
 </div>
-
-<!-- 8. Vratham (camera lifts above the temple; dark shade fades in) -->
-<section id="vratham" class="panel scrolly vratham" style="--len:240" data-dot="dot.vratham" data-cam="103 7.5 -0.36 0.55 0.6" data-steps="5">
-  <div class="sticky">
-    <h2 class="h-italic" data-i18n="vr.title">Vratham</h2>
-    <p class="hint" data-i18n="vr.hint">Scroll for the lamp</p>
-    <button type="button" class="diya-btn big" data-i18n-aria="wd.lamp"><canvas class="diya" width="240" height="240"></canvas></button>
-    <ul class="reveal-lines" aria-live="polite">
-      <li data-i18n="vr.l1">Monday, 2 November 2026</li>
-      <li data-i18n="vr.l2">From 9 in the morning</li>
-      <li data-i18n="vr.l3">Lunch at 12 noon</li>
-      <li data-i18n="vr.l4">Eluru, Andhra Pradesh</li>
-    </ul>
-  </div>
-</section>
-
-<!-- 9. Venue -->
-<section id="venue" class="panel venue">
-  <div class="panel-in">
-    <figure class="print tilt-r">
-      <img data-src="assets/charminar.jpg" width="880" height="1100" data-i18n-alt="alt.charminar" alt="" loading="lazy" decoding="async">
-    </figure>
-    <h2 class="h-italic" data-i18n="venue.title">See you in Hyderabad</h2>
-    <p class="addr" data-i18n="venue.addr">Haryana Bhavan, 1-8-179, S.D. Road, Paradise<br>Secunderabad, Hyderabad</p>
-    <a class="btn" id="map-link" target="_blank" rel="noopener" data-i18n="venue.btn">Get directions</a>
-  </div>
-</section>
-
-<!-- 10. Gifts -->
-<section id="gifts" class="panel scrolly gifts" style="--len:210" data-steps="1">
-  <div class="sticky">
-    <h2 class="h-italic" data-i18n="gift.title">Gifts</h2>
-    <div class="giftcard">
-      <div class="gc-inner">
-        <p data-i18n="gift.text">Your presence and blessings mean the most to us. If you'd like to give something more, we've made a registry.</p>
-        <a class="btn" id="registry-link" target="_blank" rel="noopener" data-i18n="gift.btn">Open our registry</a>
-        <div class="registry-embed" hidden></div>
-      </div>
-      <div class="ribbon ribbon-v" aria-hidden="true"></div>
-      <div class="ribbon ribbon-h" aria-hidden="true"></div>
-      <button type="button" class="bow" data-i18n-aria="gift.hint"><svg viewBox="0 0 200 130" aria-hidden="true">
-        <defs>
-          <linearGradient id="satinA" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7a0d12"/><stop offset=".35" stop-color="#c3232b"/><stop offset=".5" stop-color="#e8545a"/><stop offset=".62" stop-color="#b41d25"/><stop offset="1" stop-color="#6a0b10"/></linearGradient>
-          <linearGradient id="satinB" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6a0b10"/><stop offset=".4" stop-color="#b91f27"/><stop offset=".55" stop-color="#e4535a"/><stop offset=".7" stop-color="#a8171f"/><stop offset="1" stop-color="#5e090d"/></linearGradient>
-          <radialGradient id="knot" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#e2474e"/><stop offset=".6" stop-color="#a3161d"/><stop offset="1" stop-color="#5a070b"/></radialGradient>
-        </defs>
-        <path d="M96 70 C 70 88, 52 118, 44 128 L 64 128 C 72 112, 84 94, 98 78 Z" fill="url(#satinB)"/>
-        <path d="M104 70 C 130 88, 148 118, 156 128 L 136 128 C 128 112, 116 94, 102 78 Z" fill="url(#satinA)"/>
-        <path d="M98 62 C 70 30, 18 10, 10 40 C 4 62, 40 84, 98 70 Z" fill="url(#satinA)"/>
-        <path d="M98 64 C 72 44, 34 34, 30 48 C 30 58, 56 66, 96 68 Z" fill="#5c080c" opacity=".45"/>
-        <path d="M102 62 C 130 30, 182 10, 190 40 C 196 62, 160 84, 102 70 Z" fill="url(#satinB)"/>
-        <path d="M102 64 C 128 44, 166 34, 170 48 C 170 58, 144 66, 104 68 Z" fill="#5c080c" opacity=".45"/>
-        <path d="M20 36 C 40 22, 70 30, 92 58" fill="none" stroke="#f38a8f" stroke-opacity=".5" stroke-width="2"/>
-        <path d="M180 36 C 160 22, 130 30, 108 58" fill="none" stroke="#f38a8f" stroke-opacity=".35" stroke-width="2"/>
-        <rect x="86" y="52" width="28" height="26" rx="9" fill="url(#knot)"/>
-        <path d="M90 58 C 96 55, 104 55, 110 58" stroke="#f7a2a6" stroke-opacity=".55" stroke-width="1.6" fill="none"/>
-      </svg></button>
-    </div>
-    <p class="hint" data-i18n="gift.hint">Pull the ribbon</p>
-  </div>
-</section>
-
-<!-- 11. RSVP -->
-<section id="rsvp" class="panel rsvp" data-dot="dot.rsvp">
-  <div class="panel-in">
-    <h2 class="h-italic" data-i18n="rsvp.title">Will you join us?</h2>
-    <form id="rsvp-form" novalidate>
-      <label class="field">
-        <span data-i18n="rsvp.name">Your name</span>
-        <input type="text" name="name" autocomplete="name" maxlength="80" required>
-      </label>
-      <div class="field">
-        <span id="count-label" data-i18n="rsvp.count">How many of you are coming?</span>
-        <div class="stepper" role="group" aria-labelledby="count-label">
-          <button type="button" class="step" data-step="-1" data-i18n-aria="rsvp.less">−</button>
-          <output id="count" aria-live="polite">1</output>
-          <button type="button" class="step" data-step="1" data-i18n-aria="rsvp.more">+</button>
-        </div>
-        <div class="people" aria-hidden="true"></div>
-      </div>
-      <p class="form-msg" role="alert"></p>
-      <button type="submit" class="btn" data-i18n="rsvp.send">Send RSVP</button>
-    </form>
-    <div id="rsvp-done" class="rsvp-done" hidden aria-live="polite">
-      <p class="thanks"></p>
-      <button type="button" class="text-link" data-i18n="rsvp.change">Change my response</button>
-    </div>
-  </div>
-</section>
-
-<!-- 12. Memories -->
-<section id="memories" class="panel memories">
-  <div class="panel-in wide">
-    <h2 class="h-italic" data-i18n="mem.title">Memories</h2>
-    <p data-i18n="mem.text">Share photos of us, of you, or of the celebrations. They appear here once we've seen them.</p>
-    <label class="btn file-btn"><input type="file" id="photo-input" accept="image/*" multiple><span data-i18n="mem.add">Add photos</span></label>
-    <p class="mem-status" aria-live="polite"></p>
-    <div class="wall"></div>
-    <p class="mem-empty" data-i18n="mem.empty">No photos yet. Yours could be the first.</p>
-  </div>
-</section>
-
-<!-- 13. Closing -->
-<section id="closing" class="panel closing">
-  <div class="panel-in">
-    <p class="mono-big" aria-label="RaGaa">RaGaa</p>
-    <p class="love" data-i18n="close.love">With love</p>
-    <p class="short-names h-italic" data-i18n="names.short">Ranga &amp; Gaayu</p>
-  </div>
-</section>
-
-</main>
 
 <!-- Fixed controls (after the content so the opening button is the first tab stop) -->
 <div class="lang" role="group" aria-label="Language">

@@ -9,10 +9,14 @@ const RINGS = [
   { x: 0.5146, y: 0.5590, rx: 0.0286, ry: 0.0165 },
 ];
 const FOCUS = { x: 0.4818, y: 0.5556 };
+// the bright light between the two of them: scrolling flies into it
+const LIGHT = { x: 0.49, y: 0.42 };
 const ZOOM = 2.5;
 
 export function initOpening({ reduced, onOpened }) {
   const root = document.getElementById('opening');
+  const sticky = root.querySelector('.op-sticky');
+  const stage = root.querySelector('.op-stage');
   const zoom = root.querySelector('.op-zoom');
   const img = root.querySelector('.op-photo');
   const svg = root.querySelector('.op-rings');
@@ -31,7 +35,7 @@ export function initOpening({ reduced, onOpened }) {
   onLang(setNative);
 
   function layout() {
-    const W = root.clientWidth, H = root.clientHeight;
+    const W = sticky.clientWidth, H = sticky.clientHeight;
     const s = Math.max(W / IW, H / IH);
     const dw = IW * s, dh = IH * s;
     // Cover, but keep the rings horizontally centred when the sides are cropped.
@@ -66,6 +70,8 @@ export function initOpening({ reduced, onOpened }) {
     root.style.setProperty('--btn-y', fy + 'px');
     root.style.setProperty('--btn-w', Math.max(120, ringsW + 40) + 'px');
     root.style.setProperty('--btn-h', Math.max(90, ringsH + 40) + 'px');
+    root.style.setProperty('--lx', ox + LIGHT.x * dw + 'px');
+    root.style.setProperty('--ly', oy + LIGHT.y * dh + 'px');
   }
 
   const measure = () => {
@@ -112,6 +118,21 @@ export function initOpening({ reduced, onOpened }) {
   }
 
   root.addEventListener('click', open);
+
+  // After the reveal: scrolling flies into the light, which becomes the moon.
+  const names = root.querySelector('.op-names');
+  let lastQ = -1;
+  function exit(q) {
+    if (Math.abs(q - lastQ) < 0.001) return;
+    lastQ = q;
+    const e = q * q * (3 - 2 * q);
+    stage.style.transform = reduced ? '' : `scale(${1 + e * 2.6})`;
+    stage.style.opacity = String(1 - Math.min(1, Math.max(0, (q - 0.3) / 0.6)));
+    names.style.opacity = String(1 - Math.min(1, q / 0.35));
+    mono.style.opacity = String(1 - Math.min(1, q / 0.45));
+    root.style.setProperty('--op-bg', String(1 - Math.min(1, Math.max(0, (q - 0.25) / 0.6))));
+  }
+  return { exit };
   btn.addEventListener('click', (e) => { e.stopPropagation(); open(); });
   window.addEventListener('keydown', (e) => {
     if (!opened && (e.key === 'Enter' || e.key === ' ') && document.activeElement === document.body) { e.preventDefault(); open(); }
